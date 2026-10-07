@@ -1,0 +1,43 @@
+CREATE TABLE knowledge_bases (
+    id BINARY(16) PRIMARY KEY,
+    organization_id BINARY(16) NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    slug VARCHAR(140) NOT NULL,
+    description TEXT NULL,
+    visibility ENUM('PUBLIC', 'PRIVATE', 'INTERNAL') NOT NULL,
+    status ENUM('ACTIVE', 'ARCHIVED') NOT NULL DEFAULT 'ACTIVE',
+    language VARCHAR(12) NOT NULL DEFAULT 'en',
+    theme JSON NULL,
+    seo_settings JSON NULL,
+    created_by BINARY(16) NOT NULL,
+    created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    deleted_at TIMESTAMP(6) NULL,
+    CONSTRAINT fk_kb_organization FOREIGN KEY (organization_id) REFERENCES organizations(id),
+    CONSTRAINT fk_kb_creator FOREIGN KEY (created_by) REFERENCES users(id),
+    UNIQUE KEY uq_kb_org_slug (organization_id, slug),
+    KEY idx_kb_org_status (organization_id, status),
+    KEY idx_kb_updated (organization_id, updated_at)
+);
+
+CREATE TABLE categories (
+    id BINARY(16) PRIMARY KEY,
+    organization_id BINARY(16) NOT NULL,
+    knowledge_base_id BINARY(16) NOT NULL,
+    parent_id BINARY(16) NULL,
+    name VARCHAR(120) NOT NULL,
+    slug VARCHAR(140) NOT NULL,
+    description VARCHAR(1000) NULL,
+    visibility ENUM('PUBLIC', 'PRIVATE', 'INTERNAL') NOT NULL DEFAULT 'PUBLIC',
+    sort_order INT NOT NULL DEFAULT 0,
+    created_by BINARY(16) NOT NULL,
+    created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    deleted_at TIMESTAMP(6) NULL,
+    CONSTRAINT fk_categories_organization FOREIGN KEY (organization_id) REFERENCES organizations(id),
+    CONSTRAINT fk_categories_kb FOREIGN KEY (knowledge_base_id) REFERENCES knowledge_bases(id),
+    CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id) REFERENCES categories(id),
+    CONSTRAINT fk_categories_creator FOREIGN KEY (created_by) REFERENCES users(id),
+    UNIQUE KEY uq_category_kb_slug (knowledge_base_id, slug),
+    KEY idx_categories_tree (organization_id, knowledge_base_id, parent_id, sort_order)
+);

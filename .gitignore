@@ -1,0 +1,10 @@
+/target
+.env
+node_modules
+frontend/node_modules
+frontend/dist
+packages/ui/node_modules
+packages/ui/dist
+packages/ui/storybook-static
+uploads
+.impeccable/mocks

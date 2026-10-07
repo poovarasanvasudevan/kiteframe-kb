@@ -1,0 +1,12 @@
+{
+  "name": "kb-management",
+  "private": true,
+  "workspaces": ["frontend", "packages/*"],
+  "scripts": {
+    "dev": "bun run --filter kiteframe-web dev",
+    "build": "bun run --filter @kiteframe/ui build && bun run --filter kiteframe-web build",
+    "typecheck": "bun run --filter @kiteframe/ui typecheck && bun run --filter kiteframe-web typecheck",
+    "storybook": "bun run --filter @kiteframe/ui storybook",
+    "build-storybook": "bun run --filter @kiteframe/ui build-storybook"
+  }
+}
